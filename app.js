@@ -306,7 +306,7 @@
         ? `<span class="old-main">${oldEntry.ch}</span><span class="sub">${key}</span>`
         : `<span>${base}</span>${shiftCh ? `<span class="sub">${shiftCh}</span>` : ""}`;
       btn.title = oldEntry ? `옛글자: ${oldEntry.ch}` : (shiftCh ? `${base} / Shift: ${shiftCh}` : base);
-      btn.addEventListener("mousedown", (ev) => {
+      btn.addEventListener("pointerdown", (ev) => {
         ev.preventDefault();
         handleKey(key, ev.shiftKey);
         draw();
@@ -320,7 +320,7 @@
   const spaceKey = document.createElement("div");
   spaceKey.className = "key space";
   spaceKey.textContent = "spacebar";
-  spaceKey.addEventListener("mousedown", (ev) => {
+  spaceKey.addEventListener("pointerdown", (ev) => {
     ev.preventDefault();
     commit(); committed += " "; draw();
   });
