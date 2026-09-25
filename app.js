@@ -8,23 +8,34 @@
     .map((ch, i) => ({ ch, code: 0x1161 + i }));
   const JONG = [null, ..."ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ"]
     .map((ch, i) => (ch === null ? null : { ch, code: 0x11A7 + i }));
-  // (0x11A7 is the Unicode "jongseong filler"; real finals start at 0x11A8 = index 1)
 
   const idxCho = (ch) => CHO.findIndex((c) => c.ch === ch);
   const idxJung = (ch) => JUNG.findIndex((c) => c.ch === ch);
   const idxJong = (ch) => JONG.findIndex((c) => c && c.ch === ch);
 
-  // ---- Archaic (Middle Korean) jamo, verified Unicode code points ----
+  // ---- Archaic (Middle Korean) jamo, one per physical key, verified Unicode
+  // code points from the Hangul Jamo block (U+1100-U+11FF) and Hangul Jamo
+  // Extended-A (U+A960-U+A97F). Every entry is either vowel-only (jungCode)
+  // or consonant (choCode, optionally also usable as a final via jongCode).
   const OLD = {
-    araea:        { jungCode: 0x119E, ch: "ㆍ" },           // HANGUL JUNGSEONG ARAEA
-    araeai:       { jungCode: 0x11A1, ch: "ㆎ" },           // HANGUL JUNGSEONG ARAEA-I
-    pansios:      { choCode: 0x1140, jongCode: 0x11EB, ch: "ㅿ" }, // panSIOS (반치음)
-    yesieung:     { choCode: 0x114C, jongCode: 0x11F0, ch: "ㆁ" }, // yesieung (옛이응)
-    yeorinhieuh:  { choCode: 0x1159, jongCode: null,   ch: "ㆆ" }, // yeorinhieuh (여린히읗)
-    kapyeounpieup:{ choCode: 0x112B, jongCode: null,   ch: "ㅸ" }, // kapyeounpieup (순경음비읍)
+    pansios:              { choCode: 0x1140, jongCode: 0x11EB, ch: "ㅿ" }, // 반치음
+    yesieung:             { choCode: 0x114C, jongCode: 0x11F0, ch: "ㆁ" }, // 옛이응
+    yeorinhieuh:          { choCode: 0x1159, jongCode: null,   ch: "ㆆ" }, // 여린히읗
+    kapyeounpieup:        { choCode: 0x112B, jongCode: null,   ch: "ㅸ" }, // 순경음비읍
+    kapyeounmieum:        { choCode: 0x111D, jongCode: null,   ch: "ㅱ" }, // 순경음미음
+    kapyeounphieuph:      { choCode: 0x1157, jongCode: null,   ch: "ㆄ" }, // 순경음피읍
+    kapyeounssangpieup:   { choCode: 0x112C, jongCode: null,   ch: "ㅹ" }, // 순경음쌍비읍
+    ssangyeorinhieuh:     { choCode: 0xA97C, jongCode: null,   ch: "ㆅ" }, // 쌍히읗
+    siosKiyeok:           { choCode: 0x112D, jongCode: null,   ch: "ㅺ" }, // 옛 합용병서
+    siosTikeut:           { choCode: 0x112F, jongCode: null,   ch: "ㅼ" },
+    siosPieup:            { choCode: 0x1132, jongCode: null,   ch: "ㅽ" },
+    pieupSiosKiyeok:      { choCode: 0x1122, jongCode: null,   ch: "ㅴ" },
+    pieupSiosTikeut:      { choCode: 0x1123, jongCode: null,   ch: "ㅵ" },
+    araea:                { jungCode: 0x119E, ch: "ㆍ" }, // 아래아
+    araeai:               { jungCode: 0x11A1, ch: "ㆎ" }, // 아래애
   };
 
-  // ---- dubeolsik (두벌식) key layout ----
+  // ---- dubeolsik (두벌식) base layout for modern jamo ----
   const BASE_CONSONANT = {
     q: "ㅂ", w: "ㅈ", e: "ㄷ", r: "ㄱ", t: "ㅅ",
     a: "ㅁ", s: "ㄴ", d: "ㅇ", f: "ㄹ", g: "ㅎ",
@@ -38,13 +49,25 @@
   };
   const SHIFT_VOWEL = { o: "ㅒ", p: "ㅖ" };
 
-  // key -> old jamo, active while the layer is on
+  // Every old-Hangul letter gets its own physical key: the number row plus
+  // the punctuation keys just right of it, exactly where they sit on a
+  // real keyboard, so nothing needs a modifier chord.
   const OLD_KEY = {
-    q: OLD.kapyeounpieup,
-    t: OLD.pansios,
-    d: OLD.yesieung,
-    g: OLD.yeorinhieuh,
-    k: OLD.araea,
+    "1": OLD.pansios,
+    "2": OLD.yesieung,
+    "3": OLD.yeorinhieuh,
+    "4": OLD.kapyeounpieup,
+    "5": OLD.kapyeounmieum,
+    "6": OLD.kapyeounphieuph,
+    "7": OLD.kapyeounssangpieup,
+    "8": OLD.ssangyeorinhieuh,
+    "9": OLD.araea,
+    "0": OLD.araeai,
+    "-": OLD.siosKiyeok,
+    "=": OLD.siosTikeut,
+    "[": OLD.siosPieup,
+    "]": OLD.pieupSiosKiyeok,
+    "\\": OLD.pieupSiosTikeut,
   };
 
   const VOWEL_COMBINE = {
@@ -69,8 +92,6 @@
   // cho/jung/jong hold either a modern jamo string (e.g. "ㄱ") or an OLD.* entry object.
   let cho = null, jung = null, jong = null;
   let committed = "";
-  let oldLayerHeld = false;
-  let oldLayerLocked = false;
 
   const isOld = (v) => typeof v === "object" && v !== null;
 
@@ -126,31 +147,22 @@
       return;
     }
     if (cho !== null && jung === null) {
-      // lone leading consonant already sitting there; finish it and restart
       commit();
       startSyllable(sym);
       return;
     }
     if (jung !== null && jong === null) {
       if (NOT_A_FINAL.has(sym)) { commit(); startSyllable(sym); return; }
-      // tentatively becomes the final consonant
-      jong = sym;
+      jong = sym; // tentatively becomes the final consonant
       return;
     }
-    if (jung !== null && jong !== null) {
-      // try to merge into a compound final
-      if (!isOld(jong)) {
-        const combined = JONG_COMBINE[jong + sym];
-        if (combined) {
-          jong = combined;
-          return;
-        }
-      }
-      // can't merge: finish current syllable, start a new one with sym
-      commit();
-      startSyllable(sym);
-      return;
+    // jung !== null && jong !== null: try to merge into a compound final
+    if (!isOld(jong)) {
+      const combined = JONG_COMBINE[jong + sym];
+      if (combined) { jong = combined; return; }
     }
+    commit();
+    startSyllable(sym);
   }
 
   function pressVowel(sym) {
@@ -164,7 +176,6 @@
         const combined = VOWEL_COMBINE[jung + sym];
         if (combined) { jung = combined; return; }
       }
-      // second vowel that doesn't combine: commit the lone vowel(s) syllable and start a fresh vowel-only block
       commit();
       jung = sym;
       return;
@@ -185,16 +196,14 @@
       jung = sym;
       return;
     }
-    // no cho, no jung: bare vowel
-    if (cho === null && jung === null && jong === null) {
-      jung = sym;
-    }
+    // no cho, no jung, no jong: bare vowel
+    jung = sym;
   }
 
   function pressOld(entry) {
-    if (entry.jungCode !== undefined && entry.choCode === undefined) {
-      // araea: vowel-only old jamo
-      if (jung !== null) { commit(); }
+    if (entry.choCode === undefined) {
+      // vowel-only old jamo (araea / araeai)
+      if (jung !== null) commit();
       jung = entry;
       return;
     }
@@ -208,10 +217,8 @@
       startSyllable(entry);
       return;
     }
-    if (jung !== null && jong === null) {
-      if (entry.jongCode !== null) { jong = entry; return; }
-      commit();
-      startSyllable(entry);
+    if (jung !== null && jong === null && entry.jongCode !== null) {
+      jong = entry;
       return;
     }
     commit();
@@ -253,11 +260,8 @@
     sel.addRange(range);
   }
 
-  function handleKey(key, shift, useOld) {
-    if (useOld && OLD_KEY[key.toLowerCase()]) {
-      pressOld(OLD_KEY[key.toLowerCase()]);
-      return true;
-    }
+  function handleKey(key, shift) {
+    if (OLD_KEY[key]) { pressOld(OLD_KEY[key]); return true; }
     const lower = key.toLowerCase();
     if (shift && SHIFT_CONSONANT[lower]) { pressConsonant(SHIFT_CONSONANT[lower]); return true; }
     if (shift && SHIFT_VOWEL[lower]) { pressVowel(SHIFT_VOWEL[lower]); return true; }
@@ -266,38 +270,25 @@
     return false;
   }
 
-  function updateOldToggleLabel() {
-    const btn = document.getElementById("oldLayerToggle");
-    btn.setAttribute("aria-pressed", String(oldLayerLocked));
-    btn.textContent = `옛글자 잠금: ${oldLayerLocked ? "켜짐" : "꺼짐"}`;
-  }
-
-  document.getElementById("oldLayerToggle").addEventListener("click", () => {
-    oldLayerLocked = !oldLayerLocked;
-    updateOldToggleLabel();
-  });
   document.getElementById("clearBtn").addEventListener("click", () => {
     committed = ""; cho = jung = jong = null; draw();
   });
 
   window.addEventListener("keydown", (e) => {
-    if (e.code === "Backquote") { oldLayerHeld = true; e.preventDefault(); return; }
     if (e.key === "Backspace") { backspace(); draw(); e.preventDefault(); return; }
     if (e.key === "Enter") { commit(); committed += "\n"; draw(); e.preventDefault(); return; }
     if (e.key === " ") { commit(); committed += " "; draw(); e.preventDefault(); return; }
-    if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
-      const useOld = oldLayerHeld || oldLayerLocked;
-      const handled = handleKey(e.key, e.shiftKey, useOld);
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (OLD_KEY[e.key] || (e.key.length === 1 && /[a-zA-Z]/.test(e.key))) {
+      const handled = handleKey(e.key, e.shiftKey);
       if (handled) { draw(); e.preventDefault(); }
     }
   });
-  window.addEventListener("keyup", (e) => {
-    if (e.code === "Backquote") oldLayerHeld = false;
-  });
 
-  // ---- on-screen keyboard ----
+  // ---- on-screen keyboard, laid out like a physical keyboard ----
   const ROWS = [
-    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+    ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="],
+    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\"],
     ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
     ["z", "x", "c", "v", "b", "n", "m"],
   ];
@@ -307,15 +298,17 @@
     rowEl.className = "kb-row";
     row.forEach((key) => {
       const btn = document.createElement("div");
-      btn.className = "key";
+      btn.className = "key" + (OLD_KEY[key] ? " old" : "");
       const base = BASE_CONSONANT[key] || BASE_VOWEL[key] || key;
       const shiftCh = SHIFT_CONSONANT[key] || SHIFT_VOWEL[key];
-      btn.innerHTML = `<span>${base}</span>${OLD_KEY[key] ? `<span class="old-mark">${OLD_KEY[key].ch}</span>` : ""}`;
-      btn.title = shiftCh ? `${base} / Shift: ${shiftCh}` : base;
+      const oldEntry = OLD_KEY[key];
+      btn.innerHTML = oldEntry
+        ? `<span class="old-main">${oldEntry.ch}</span><span class="sub">${key}</span>`
+        : `<span>${base}</span>${shiftCh ? `<span class="sub">${shiftCh}</span>` : ""}`;
+      btn.title = oldEntry ? `옛글자: ${oldEntry.ch}` : (shiftCh ? `${base} / Shift: ${shiftCh}` : base);
       btn.addEventListener("mousedown", (ev) => {
         ev.preventDefault();
-        const useOld = oldLayerLocked || ev.altKey;
-        handleKey(key, ev.shiftKey, useOld);
+        handleKey(key, ev.shiftKey);
         draw();
       });
       rowEl.appendChild(btn);
@@ -334,6 +327,5 @@
   spaceRow.appendChild(spaceKey);
   kb.appendChild(spaceRow);
 
-  updateOldToggleLabel();
   draw();
 })();

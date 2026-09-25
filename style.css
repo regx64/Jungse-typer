@@ -92,6 +92,7 @@ kbd {
   border: 1px solid #454252;
   border-radius: 8px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: 1.1rem;
@@ -100,13 +101,17 @@ kbd {
   transition: background 0.08s, transform 0.08s;
 }
 .key:active, .key.pressed { background: var(--key-active); transform: scale(0.95); }
-.key .old-mark {
-  position: absolute;
-  top: 3px;
-  right: 5px;
-  font-size: 0.6rem;
-  color: #d9c4ff;
+.key .sub {
+  font-size: 0.65rem;
+  color: var(--muted);
+  margin-top: 2px;
 }
+.key.old {
+  background: var(--key-old);
+  border-color: #b784d8;
+}
+.key.old .old-main { font-size: 1.2rem; }
+.key.old .sub { color: #ecdcff; }
 .key.wide { min-width: 90px; }
 .key.space { min-width: 260px; }
 

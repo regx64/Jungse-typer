@@ -9,16 +9,15 @@
 <body>
   <header>
     <h1>중세국어 타이핑기</h1>
-    <p class="subtitle">두벌식 자판 + 옛글자(아래아·반치음·옛이응·여린히읗·순경음비읍)</p>
+    <p class="subtitle">두벌식 자판(문자 키) + 옛글자 15종(숫자·기호 키에 직접 배정)</p>
   </header>
 
   <main>
     <div id="output" contenteditable="true" spellcheck="false" aria-label="입력 결과"></div>
 
     <div class="toolbar">
-      <button id="oldLayerToggle" type="button" aria-pressed="false">옛글자 잠금: 꺼짐</button>
       <button id="clearBtn" type="button">지우기</button>
-      <span class="hint">키보드로 직접 입력하거나, 아래 자판을 클릭하세요. <kbd>`</kbd> 키를 누르고 있으면 임시로 옛글자를 입력합니다.</span>
+      <span class="hint">문자 키는 현대 한글, 숫자·기호 키(보라색)는 옛글자입니다. 화면 자판을 클릭하거나 실제 키보드로 입력하세요.</span>
     </div>
 
     <div id="keyboard"></div>
@@ -26,16 +25,26 @@
     <details class="legend">
       <summary>자판 안내 보기</summary>
       <table>
-        <thead><tr><th>키</th><th>기본(현대)</th><th>옛글자(`+키)</th></tr></thead>
+        <thead><tr><th>키</th><th>옛글자</th><th>이름</th></tr></thead>
         <tbody>
-          <tr><td>q / Q</td><td>ㅂ / ㅃ</td><td>ㅸ (순경음비읍)</td></tr>
-          <tr><td>t / T</td><td>ㅅ / ㅆ</td><td>ㅿ (반치음)</td></tr>
-          <tr><td>d</td><td>ㅇ</td><td>ㆁ (옛이응)</td></tr>
-          <tr><td>g</td><td>ㅎ</td><td>ㆆ (여린히읗)</td></tr>
-          <tr><td>k</td><td>ㅏ</td><td>ㆍ (아래아)</td></tr>
+          <tr><td>1</td><td>ㅿ</td><td>반치음</td></tr>
+          <tr><td>2</td><td>ㆁ</td><td>옛이응</td></tr>
+          <tr><td>3</td><td>ㆆ</td><td>여린히읗</td></tr>
+          <tr><td>4</td><td>ㅸ</td><td>순경음비읍</td></tr>
+          <tr><td>5</td><td>ㅱ</td><td>순경음미음</td></tr>
+          <tr><td>6</td><td>ㆄ</td><td>순경음피읍</td></tr>
+          <tr><td>7</td><td>ㅹ</td><td>순경음쌍비읍</td></tr>
+          <tr><td>8</td><td>ㆅ</td><td>쌍히읗</td></tr>
+          <tr><td>9</td><td>ㆍ</td><td>아래아</td></tr>
+          <tr><td>0</td><td>ㆎ</td><td>아래애 (ㆍ+ㅣ로도 자동 결합)</td></tr>
+          <tr><td>-</td><td>ㅺ</td><td>옛 합용병서(ㅅ+ㄱ)</td></tr>
+          <tr><td>=</td><td>ㅼ</td><td>옛 합용병서(ㅅ+ㄷ)</td></tr>
+          <tr><td>[</td><td>ㅽ</td><td>옛 합용병서(ㅅ+ㅂ)</td></tr>
+          <tr><td>]</td><td>ㅴ</td><td>옛 합용병서(ㅂ+ㅅ+ㄱ)</td></tr>
+          <tr><td>\</td><td>ㅵ</td><td>옛 합용병서(ㅂ+ㅅ+ㄷ)</td></tr>
         </tbody>
       </table>
-      <p>아래아(ㆍ) 뒤에 ㅣ(l 키)를 이어 치면 자동으로 ㆎ로 결합됩니다. 옛글자는 유니코드 한글 자모 영역(U+1100~U+11FF)의 개별 코드포인트로 출력되며, 완성형 한글 음절 영역에 없는 조합이므로 옛한글을 지원하는 글꼴/운영체제에서 온전한 음절 모양으로 보입니다(그렇지 않으면 낱자가 풀어져 보일 수 있습니다).</p>
+      <p>옛글자는 유니코드 한글 자모 영역(U+1100~U+11FF, 일부는 U+A97C)의 개별 코드포인트로 출력되며, 완성형 한글 음절 영역에 없는 조합이므로 옛한글 표시를 지원하는 글꼴/운영체제(예: Windows의 맑은 고딕)에서 온전한 음절 모양으로 보입니다. 지원하지 않는 환경에서는 낱자가 풀어져 보일 수 있습니다.</p>
     </details>
   </main>
 
