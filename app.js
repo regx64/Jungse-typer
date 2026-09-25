@@ -270,6 +270,21 @@
     return false;
   }
 
+  // event.code names the physical key regardless of the OS keyboard layout
+  // (Korean, Dvorak, ...); event.key does not, and using it made this app
+  // depend on the OS layout being plain US QWERTY. Mapping by code is what
+  // lets this work the same for every user.
+  const CODE_TO_KEY = {
+    Digit1: "1", Digit2: "2", Digit3: "3", Digit4: "4", Digit5: "5",
+    Digit6: "6", Digit7: "7", Digit8: "8", Digit9: "9", Digit0: "0",
+    Minus: "-", Equal: "=", BracketLeft: "[", BracketRight: "]", Backslash: "\\",
+    KeyQ: "q", KeyW: "w", KeyE: "e", KeyR: "r", KeyT: "t",
+    KeyY: "y", KeyU: "u", KeyI: "i", KeyO: "o", KeyP: "p",
+    KeyA: "a", KeyS: "s", KeyD: "d", KeyF: "f", KeyG: "g",
+    KeyH: "h", KeyJ: "j", KeyK: "k", KeyL: "l",
+    KeyZ: "z", KeyX: "x", KeyC: "c", KeyV: "v", KeyB: "b", KeyN: "n", KeyM: "m",
+  };
+
   document.getElementById("clearBtn").addEventListener("click", () => {
     committed = ""; cho = jung = jong = null; draw();
   });
@@ -277,10 +292,11 @@
   window.addEventListener("keydown", (e) => {
     if (e.key === "Backspace") { backspace(); draw(); e.preventDefault(); return; }
     if (e.key === "Enter") { commit(); committed += "\n"; draw(); e.preventDefault(); return; }
-    if (e.key === " ") { commit(); committed += " "; draw(); e.preventDefault(); return; }
+    if (e.code === "Space") { commit(); committed += " "; draw(); e.preventDefault(); return; }
     if (e.ctrlKey || e.metaKey || e.altKey) return;
-    if (OLD_KEY[e.key] || (e.key.length === 1 && /[a-zA-Z]/.test(e.key))) {
-      const handled = handleKey(e.key, e.shiftKey);
+    const canon = CODE_TO_KEY[e.code];
+    if (canon) {
+      const handled = handleKey(canon, e.shiftKey);
       if (handled) { draw(); e.preventDefault(); }
     }
   });
