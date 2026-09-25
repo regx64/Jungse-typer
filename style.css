@@ -1,0 +1,120 @@
+:root {
+  --bg: #1c1b22;
+  --panel: #26242e;
+  --key: #34313d;
+  --key-active: #6c5ce7;
+  --key-old: #9b59b6;
+  --text: #f0eef6;
+  --muted: #a29fb0;
+  --accent: #6c5ce7;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 48px;
+}
+
+header { text-align: center; margin-bottom: 20px; }
+h1 { margin: 0 0 6px; font-size: 1.6rem; }
+.subtitle { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+main { width: 100%; max-width: 780px; }
+
+#output {
+  width: 100%;
+  min-height: 140px;
+  background: var(--panel);
+  border: 1px solid #3a3745;
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 1.8rem;
+  line-height: 1.8;
+  outline: none;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+#output:focus { border-color: var(--accent); }
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 20px;
+}
+
+button {
+  background: var(--key);
+  color: var(--text);
+  border: 1px solid #454252;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+button[aria-pressed="true"] { background: var(--key-old); border-color: var(--key-old); }
+button:hover { filter: brightness(1.15); }
+
+.hint { color: var(--muted); font-size: 0.8rem; }
+kbd {
+  background: #100f14;
+  border: 1px solid #454252;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.8rem;
+}
+
+#keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--panel);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.kb-row { display: flex; gap: 6px; justify-content: center; }
+
+.key {
+  position: relative;
+  min-width: 46px;
+  height: 54px;
+  background: var(--key);
+  border: 1px solid #454252;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.08s, transform 0.08s;
+}
+.key:active, .key.pressed { background: var(--key-active); transform: scale(0.95); }
+.key .old-mark {
+  position: absolute;
+  top: 3px;
+  right: 5px;
+  font-size: 0.6rem;
+  color: #d9c4ff;
+}
+.key.wide { min-width: 90px; }
+.key.space { min-width: 260px; }
+
+.legend { margin-top: 20px; color: var(--muted); font-size: 0.85rem; }
+.legend table { border-collapse: collapse; margin: 10px 0; width: 100%; }
+.legend th, .legend td {
+  border: 1px solid #3a3745;
+  padding: 6px 10px;
+  text-align: center;
+}
+.legend summary { cursor: pointer; color: var(--text); }

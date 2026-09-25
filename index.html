@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중세국어 타이핑기</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>중세국어 타이핑기</h1>
+    <p class="subtitle">두벌식 자판 + 옛글자(아래아·반치음·옛이응·여린히읗·순경음비읍)</p>
+  </header>
+
+  <main>
+    <div id="output" contenteditable="true" spellcheck="false" aria-label="입력 결과"></div>
+
+    <div class="toolbar">
+      <button id="oldLayerToggle" type="button" aria-pressed="false">옛글자 잠금: 꺼짐</button>
+      <button id="clearBtn" type="button">지우기</button>
+      <span class="hint">키보드로 직접 입력하거나, 아래 자판을 클릭하세요. <kbd>`</kbd> 키를 누르고 있으면 임시로 옛글자를 입력합니다.</span>
+    </div>
+
+    <div id="keyboard"></div>
+
+    <details class="legend">
+      <summary>자판 안내 보기</summary>
+      <table>
+        <thead><tr><th>키</th><th>기본(현대)</th><th>옛글자(`+키)</th></tr></thead>
+        <tbody>
+          <tr><td>q / Q</td><td>ㅂ / ㅃ</td><td>ㅸ (순경음비읍)</td></tr>
+          <tr><td>t / T</td><td>ㅅ / ㅆ</td><td>ㅿ (반치음)</td></tr>
+          <tr><td>d</td><td>ㅇ</td><td>ㆁ (옛이응)</td></tr>
+          <tr><td>g</td><td>ㅎ</td><td>ㆆ (여린히읗)</td></tr>
+          <tr><td>k</td><td>ㅏ</td><td>ㆍ (아래아)</td></tr>
+        </tbody>
+      </table>
+      <p>아래아(ㆍ) 뒤에 ㅣ(l 키)를 이어 치면 자동으로 ㆎ로 결합됩니다. 옛글자는 유니코드 한글 자모 영역(U+1100~U+11FF)의 개별 코드포인트로 출력되며, 완성형 한글 음절 영역에 없는 조합이므로 옛한글을 지원하는 글꼴/운영체제에서 온전한 음절 모양으로 보입니다(그렇지 않으면 낱자가 풀어져 보일 수 있습니다).</p>
+    </details>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
